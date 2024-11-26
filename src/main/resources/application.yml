@@ -1,0 +1,32 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: sber-code-beauty-context
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/operationsdb
+    username: user
+    password: user_secret
+  task:
+    execution:
+      pool:
+        core-size: 100                 # Количество потоков, которые всегда активны
+        max-size: 100                  # Максимальное количество потоков
+        queue-capacity: 1000             # Размер очереди задач
+        keep-alive: 60s                 # Время ожидания завершения потоков при простое
+        allow-core-thread-timeout: true # Основные потоки могут быть завершены
+      shutdown:
+        await-termination: true
+        await-termination-period: 10s
+      thread-name-prefix: "TransactionExecutor-"
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+logging:
+  config: classpath:/config/logback-spring.xml
+
+

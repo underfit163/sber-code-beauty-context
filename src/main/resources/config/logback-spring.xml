@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Подключение базовой конфигурации Spring Boot -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- Включение альтернативного конфигурационного файла, если он существует -->
+    <include file="/logback.xml" optional="true"/>
+
+    <!-- Определение переменных для удобства -->
+    <property name="LOG_FILE" value="application.log"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+<!--    <springProperty name="KAFKA_BROKERS" source="logging.kafka.brokers"/>-->
+<!--    <springProperty name="KAFKA_TOPIC" source="logging.kafka.topic" defaultValue="logs"/>-->
+
+    <!-- Консольный аппендер -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Файловый аппендер с ротацией по размеру и общим объёмом -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Архивные логи будут храниться в папке logs -->
+            <fileNamePattern>logs/application.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- Максимальный размер одного файла лога -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- Общий размер всех архивных логов -->
+            <totalSizeCap>100MB</totalSizeCap>
+            <!-- Количество архивных файлов, хранимых в истории -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Kafka Appender -->
+<!--    <appender name="KAFKA" class="net.logstash.logback.appender.LogstashKafkaAppender">-->
+<!--        <destination>${KAFKA_BROKERS}</destination>-->
+<!--        <topic>${KAFKA_TOPIC}</topic>-->
+<!--        -->
+<!--        &lt;!&ndash; Конфигурация Producer'а Kafka &ndash;&gt;-->
+<!--        <producerConfig>-->
+<!--            <property name="enable.idempotence">false</property>-->
+<!--            <property name="acks">1</property>-->
+<!--            <property name="key.serializer">org.apache.kafka.common.serialization.StringSerializer</property>-->
+<!--            <property name="value.serializer">org.apache.kafka.common.serialization.StringSerializer</property>-->
+<!--        </producerConfig>-->
+
+<!--        &lt;!&ndash; Кодировщик логов в JSON &ndash;&gt;-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+<!--        </encoder>-->
+
+<!--        &lt;!&ndash; Размер буфера и другие параметры &ndash;&gt;-->
+<!--        <bufferSize>8192</bufferSize>-->
+<!--        <batchSize>512</batchSize>-->
+<!--        <flushTimeout>5000</flushTimeout>-->
+<!--    </appender>-->
+
+    <!-- Уровни логирования для пакетов -->
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="com.bank.sbercodebeautycontext" level="DEBUG"/>
+
+    <!-- Корневой логгер -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
